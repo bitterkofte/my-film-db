@@ -1,15 +1,25 @@
-import React, { useState } from 'react'
-import ListedMovie from './ListedMovie';
-import WatchedMovie from './WatchedMovie';
-import Box from './Box';
-import Loader from '../Loader';
-import Error from '../Error';
-import MovieDetails from './MovieDetails';
+import React, { useState } from "react";
+import ListedMovie from "./ListedMovie";
+import WatchedMovie from "./WatchedMovie";
+import Box from "./Box";
+import Loader from "../Loader";
+import Error from "../Error";
+import MovieDetails from "./MovieDetails";
 
-const Main = ({movies, tempWatchedData, isLoading, error, selectedMovie, selectHandler, closeHandler}) => {
-  const [watched, setWatched] = useState(tempWatchedData);
+const Main = ({
+  movies,
+  isLoading,
+  error,
+  selectedMovie,
+  selectHandler,
+  closeHandler,
+  watched,
+  addWatchedHandler,
+}) => {
+  // const [watched, setWatched] = useState(tempWatchedData);
 
-  const average = (arr) => arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
+  const average = (arr) =>
+    arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
@@ -17,59 +27,67 @@ const Main = ({movies, tempWatchedData, isLoading, error, selectedMovie, selectH
   return (
     <main className="main">
       <Box>
-        {!isLoading && !error ?
+        {!isLoading && !error ? (
           <ul className="list list-movies">
             {movies?.map((movie) => (
-              <ListedMovie movie={movie} key={movie.imdbID} selectHandler={selectHandler} />
+              <ListedMovie
+                movie={movie}
+                key={movie.imdbID}
+                selectHandler={selectHandler}
+              />
             ))}
           </ul>
-          :
-          isLoading ?
+        ) : isLoading ? (
           <Loader />
-          :
-          error ?
-          <Error message={error}/>
-          : ""
-        }
+        ) : error ? (
+          <Error message={error} />
+        ) : (
+          ""
+        )}
       </Box>
 
       <Box>
-        {selectedMovie ?
-          <MovieDetails selectedMovie={selectedMovie} closeHandler={closeHandler} />
-          :
+        {selectedMovie ? (
+          <MovieDetails
+            selectedMovie={selectedMovie}
+            closeHandler={closeHandler}
+            watched={watched}
+            addWatchedHandler={addWatchedHandler}
+          />
+        ) : (
           <>
-          <div className="summary">
-            <h2>Movies you watched</h2>
-            <div>
-              <p>
-                <span>#️⃣</span>
-                <span>{watched.length} movies</span>
-              </p>
-              <p>
-                <span>⭐️</span>
-                <span>{avgImdbRating}</span>
-              </p>
-              <p>
-                <span>🌟</span>
-                <span>{avgUserRating}</span>
-              </p>
-              <p>
-                <span>⏳</span>
-                <span>{avgRuntime} min</span>
-              </p>
+            <div className="summary">
+              <h2>Movies you watched</h2>
+              <div>
+                <p>
+                  <span>#️⃣</span>
+                  <span>{watched.length} movies</span>
+                </p>
+                <p>
+                  <span>⭐️</span>
+                  <span>{avgImdbRating}</span>
+                </p>
+                <p>
+                  <span>🌟</span>
+                  <span>{avgUserRating}</span>
+                </p>
+                <p>
+                  <span>⏳</span>
+                  <span>{avgRuntime} min</span>
+                </p>
+              </div>
             </div>
-          </div>
 
-          <ul className="list">
-            {watched.map((movie) => (
-              <WatchedMovie movie={movie} key={movie.imdbID} />
+            <ul className="list">
+              {watched.map((movie) => (
+                <WatchedMovie movie={movie} key={movie.imdbID} />
               ))}
-          </ul>
+            </ul>
           </>
-      }
+        )}
       </Box>
     </main>
-  )
-}
+  );
+};
 
-export default Main
+export default Main;
