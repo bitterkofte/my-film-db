@@ -6,10 +6,10 @@ import Logo from "./components/Nav/Logo";
 import SearchBar from "./components/Nav/SearchBar";
 import NumResults from "./components/Nav/NumResults";
 import { useLocalStorageState } from "./hooks/useLocalStorageState";
+import { useKeyAction } from "./hooks/useKeyAction";
 
 
 const apikey = "8fca1247";
-const Tempquery = "Interstellar";
 const errorMessages = [
   "Something went wrong while fetching movies and shows 🕳",
   "We couldn't find anything related. 😢",
@@ -19,7 +19,7 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState(Tempquery);
+  const [query, setQuery] = useState("");
   const [selectedMovie, setSelectedMovie] = useState(null);
   // const [watched, setWatched] = useState(() => {
   //   const storedValue = localStorage.getItem("watched");
@@ -42,9 +42,6 @@ export default function App() {
   function deleteWatchedHandler(id) {
     setWatchedMovies((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
-  // useEffect(() => {
-  //   localStorage.setItem("watched", JSON.stringify(watchedMovies));
-  // }, [watchedMovies]);
 
   const fetchMovies = async () => {
     try {
@@ -57,7 +54,6 @@ export default function App() {
       if (!res.ok) throw new Error(errorMessages.at(0));
       const data = await res.json();
       if (data.Response === "False") throw new Error(errorMessages.at(1));
-      // console.log("RSLT: ", data.Search);
       setMovies(data.Search);
     } catch (err) {
       console.error(err.message);
@@ -84,15 +80,7 @@ export default function App() {
     };
   }, [query]);
 
-  // useEffect(() => {
-  //   if (query.length < 3) {
-  //     setMovies([]);
-  //     setError('');
-  //     return;
-  //   }
-
-  //   fetchMovies();
-  // }, [query]);
+  useKeyAction('escape', closeHandler);
 
   return (
     <>
