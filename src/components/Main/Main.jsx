@@ -5,6 +5,7 @@ import Box from "./Box";
 import Loader from "../Loader";
 import Error from "../Error";
 import MovieDetails from "./MovieDetails";
+// import { useLocalStorageState } from "../../hooks/useLocalStorageState";
 
 const Main = ({
   movies,
@@ -15,8 +16,10 @@ const Main = ({
   closeHandler,
   watched,
   addWatchedHandler,
+  onDeleteWatched
 }) => {
   // const [watched, setWatched] = useState(tempWatchedData);
+  // const [watchedMovies, setWatchedMovies] = useLocalStorageState([], "watchedMovies");
 
   const average = (arr) =>
     arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -24,6 +27,7 @@ const Main = ({
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(watched.map((movie) => movie.runtime));
+
   return (
     <main className="main">
       <Box>
@@ -80,7 +84,7 @@ const Main = ({
 
             <ul className="list">
               {watched.map((movie) => (
-                <WatchedMovie movie={movie} key={movie.imdbID} />
+                <WatchedMovie movie={movie} key={movie.imdbID} onDeleteWatched={onDeleteWatched} />
               ))}
             </ul>
           </>

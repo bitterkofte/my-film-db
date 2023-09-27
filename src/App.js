@@ -5,6 +5,7 @@ import Main from "./components/Main/Main";
 import Logo from "./components/Nav/Logo";
 import SearchBar from "./components/Nav/SearchBar";
 import NumResults from "./components/Nav/NumResults";
+import { useLocalStorageState } from "./hooks/useLocalStorageState";
 
 
 const apikey = "8fca1247";
@@ -20,11 +21,11 @@ export default function App() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState(Tempquery);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [watched, setWatched] = useState([]);
-
-  // fetch(`http://www.omdbapi.com/?s=Interstellar&apikey=${apikey}`)
-  // .then(res => res.json())
-  // .then(data => console.log('mydata: ', data))
+  // const [watched, setWatched] = useState(() => {
+  //   const storedValue = localStorage.getItem("watched");
+  //   return storedValue ? JSON.parse(storedValue) : [];
+  // });
+  const [watchedMovies, setWatchedMovies] = useLocalStorageState([], "watchedMovies");
 
   const selectHandler = (id) => {
     setSelectedMovie((prev) => (prev !== id ? id : null));
@@ -35,8 +36,15 @@ export default function App() {
   };
 
   const addWatchedHandler = (movie) => {
-    setWatched((watched) => [...watched, movie]);
+    setWatchedMovies((watched) => [...watched, movie]);
   };
+
+  function deleteWatchedHandler(id) {
+    setWatchedMovies((watched) => watched.filter((movie) => movie.imdbID !== id));
+  }
+  // useEffect(() => {
+  //   localStorage.setItem("watched", JSON.stringify(watchedMovies));
+  // }, [watchedMovies]);
 
   const fetchMovies = async () => {
     try {
@@ -95,13 +103,14 @@ export default function App() {
       </Navbar>
       <Main
         movies={movies}
-        watched={watched}
+        watched={watchedMovies}
         addWatchedHandler={addWatchedHandler}
         selectedMovie={selectedMovie}
         selectHandler={selectHandler}
         closeHandler={closeHandler}
         isLoading={isLoading}
         error={error}
+        onDeleteWatched={deleteWatchedHandler}
       />
     </>
   );
